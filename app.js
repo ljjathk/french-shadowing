@@ -407,6 +407,12 @@ function toggleRecord(event, index) {
     const card = document.getElementById(`card-${index}`);
     const targetWord = currentData[index].word;
 
+    // 停止正在播放的音频，避免手机端同时发声和收音导致浏览器 abort 语音识别
+    if (audioPlayer && !audioPlayer.paused) {
+        audioPlayer.pause();
+        audioPlayer.currentTime = 0;
+    }
+
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) {
         fallbackToMediaRecorder(btn, card);
@@ -418,6 +424,11 @@ function toggleRecord(event, index) {
         btn.classList.remove('active');
         card.classList.remove('recording');
         return;
+    }
+
+    if (recognition) {
+        // 先尝试停止上一个未完成的识别
+        try { recognition.stop(); } catch(e) {}
     }
 
     recognition = new SpeechRecognition();
@@ -455,6 +466,8 @@ function toggleRecord(event, index) {
             showFeedback(card, '❌ 请允许麦克风权限', true);
         } else if (e.error === 'network') {
             showFeedback(card, '❌ 语音识别需要网络连接', true);
+        } else if (e.error === 'aborted') {
+            showFeedback(card, '❌ 识别被系统中断 (请勿在发音时同时点击)', true);
         } else {
             showFeedback(card, `❌ 识别出错: ${e.error}`, true);
         }
