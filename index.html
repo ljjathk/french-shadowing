@@ -29,6 +29,15 @@
                 <button id="shadowBtn" class="btn secondary">
                     <span>🎤</span> 跟读模式: 关
                 </button>
+                <button id="recognizeBtn" class="btn accent-alt">
+                    <span>👁️‍🗨️</span> 辨音模式: 关
+                </button>
+                <button id="simpleBtn" class="btn dict-btn">
+                    <span>📝</span> 简易听写: 关
+                </button>
+                <button id="fullBtn" class="btn dict-btn">
+                    <span>⌨️</span> 全部听写: 关
+                </button>
             </div>
         </header>
 
@@ -37,7 +46,10 @@
             <button class="tab-btn" data-level="intermediate">中级 (Intermédiaire)</button>
         </nav>
 
+        <div id="alphabetNav" class="alphabet-nav"></div>
+
         <main id="vocabList" class="vocab-list">
+
             <div class="loading">
                 <div class="spinner"></div>
                 <p>⏳ 加载词汇数据...</p>
