@@ -351,6 +351,57 @@ window.checkFullDict = (input, correctWord, wordIndex) => {
 };
 
 let recognition = null;
+let mediaRecorder = null;
+let audioChunks = [];
+
+function showFeedback(card, message, isError = false) {
+    let feedbackEl = card.querySelector('.speech-feedback');
+    if (!feedbackEl) {
+        feedbackEl = document.createElement('div');
+        feedbackEl.className = 'speech-feedback';
+        feedbackEl.style.marginTop = '8px';
+        feedbackEl.style.fontSize = '0.9rem';
+        feedbackEl.style.fontWeight = '600';
+        card.querySelector('.word-info').appendChild(feedbackEl);
+    }
+    feedbackEl.innerHTML = message;
+    feedbackEl.style.color = isError ? '#ef4444' : '#10b981';
+}
+
+async function fallbackToMediaRecorder(btn, card) {
+    if (btn.classList.contains('active')) {
+        if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+            mediaRecorder.stop();
+        }
+        btn.classList.remove('active');
+        card.classList.remove('recording');
+        return;
+    }
+
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaRecorder = new MediaRecorder(stream);
+        audioChunks = [];
+
+        mediaRecorder.ondataavailable = (e) => {
+            audioChunks.push(e.data);
+        };
+
+        mediaRecorder.onstop = () => {
+            const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+            const audioUrl = URL.createObjectURL(audioBlob);
+            const audio = new Audio(audioUrl);
+            audio.play(); 
+        };
+
+        mediaRecorder.start();
+        btn.classList.add('active');
+        card.classList.add('recording');
+        showFeedback(card, "⚠️ 浏览器不支持智能识别，已降级为普通录音跟读", true);
+    } catch (err) {
+        showFeedback(card, '❌ 无法访问麦克风: ' + err.message, true);
+    }
+}
 
 function toggleRecord(event, index) {
     event.stopPropagation();
@@ -360,7 +411,7 @@ function toggleRecord(event, index) {
 
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) {
-        alert("当前浏览器不支持语音识别功能，请使用 Google Chrome 或 Edge 浏览器。");
+        fallbackToMediaRecorder(btn, card);
         return;
     }
 
@@ -372,7 +423,7 @@ function toggleRecord(event, index) {
     }
 
     recognition = new SpeechRecognition();
-    recognition.lang = 'fr-FR'; // 设置为法语
+    recognition.lang = 'fr-FR'; 
     recognition.interimResults = false;
     recognition.maxAlternatives = 1;
 
@@ -388,34 +439,26 @@ function toggleRecord(event, index) {
     recognition.onresult = (e) => {
         const transcript = e.results[0][0].transcript;
         
-        // 清理字符串进行比对（忽略大小写和标点）
         const cleanTarget = targetWord.toLowerCase().replace(/[.,!?;:()]/g, '').trim();
         const cleanTranscript = transcript.toLowerCase().replace(/[.,!?;:()]/g, '').trim();
         
-        // 简单包含或完全匹配即认为正确
         const isCorrect = cleanTranscript === cleanTarget || cleanTranscript.includes(cleanTarget) || cleanTarget.includes(cleanTranscript);
         
-        const feedbackEl = document.createElement('div');
-        feedbackEl.className = 'speech-feedback';
-        feedbackEl.style.marginTop = '8px';
-        feedbackEl.style.fontSize = '0.9rem';
-        feedbackEl.style.fontWeight = '600';
-        
         if (isCorrect) {
-            feedbackEl.innerHTML = `✅ 识别到: <b>${transcript}</b> (发音很棒！)`;
-            feedbackEl.style.color = '#10b981';
+            showFeedback(card, `✅ 识别到: <b>${transcript}</b> (发音很棒！)`, false);
         } else {
-            feedbackEl.innerHTML = `❌ 识别到: <b>${transcript}</b> (再试一次吧)`;
-            feedbackEl.style.color = '#ef4444';
+            showFeedback(card, `❌ 识别到: <b>${transcript}</b> (再试一次吧)`, true);
         }
-        
-        card.querySelector('.word-info').appendChild(feedbackEl);
     };
 
     recognition.onerror = (e) => {
         console.error('Speech recognition error', e.error);
         if (e.error === 'not-allowed') {
-            alert('请允许麦克风权限');
+            showFeedback(card, '❌ 请允许麦克风权限', true);
+        } else if (e.error === 'network') {
+            showFeedback(card, '❌ 语音识别需要网络连接', true);
+        } else {
+            showFeedback(card, `❌ 识别出错: ${e.error}`, true);
         }
     };
 
