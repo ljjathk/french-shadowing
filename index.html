@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>法语跟读 · 词汇渐进</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="app-title">
+                <span style="font-size: 2rem;">🇫🇷</span>
+                <div>
+                    <h1>法语跟读</h1>
+                    <p id="stats" style="font-size: 0.8rem; color: var(--text-secondary);">加载中...</p>
+                </div>
+            </div>
+            <div class="controls">
+                <button id="autoPlayBtn" class="btn">
+                    <span>▶</span> 自动播放
+                </button>
+                <button id="shuffleBtn" class="btn">
+                    <span>🔀</span> 随机播放
+                </button>
+                <button id="shadowBtn" class="btn secondary">
+                    <span>🎤</span> 跟读模式: 关
+                </button>
+            </div>
+        </header>
+
+        <nav class="tabs">
+            <button class="tab-btn active" data-level="beginner">初级 (Débutant)</button>
+            <button class="tab-btn" data-level="intermediate">中级 (Intermédiaire)</button>
+        </nav>
+
+        <main id="vocabList" class="vocab-list">
+            <div class="loading">
+                <div class="spinner"></div>
+                <p>⏳ 加载词汇数据...</p>
+            </div>
+        </main>
+    </div>
+
+    <audio id="audioPlayer" style="display: none;"></audio>
+
+    <script src="app.js"></script>
+</body>
+</html>
