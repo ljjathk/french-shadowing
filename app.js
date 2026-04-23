@@ -242,6 +242,14 @@ shuffleBtn.onclick = () => {
 };
 
 
+const toggleModesBtn = document.getElementById('toggleModesBtn');
+const modesPanel = document.getElementById('modesPanel');
+
+toggleModesBtn.onclick = () => {
+    modesPanel.classList.toggle('hidden');
+    toggleModesBtn.classList.toggle('active');
+};
+
 shadowBtn.onclick = () => {
     isShadowing = !isShadowing;
     shadowBtn.classList.toggle('active', isShadowing);

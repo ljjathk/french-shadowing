@@ -20,24 +20,31 @@
                 </div>
             </div>
             <div class="controls">
-                <button id="autoPlayBtn" class="btn">
-                    <span>▶</span> 自动播放
-                </button>
-                <button id="shuffleBtn" class="btn">
-                    <span>🔀</span> 随机播放
-                </button>
-                <button id="shadowBtn" class="btn secondary">
-                    <span>🎤</span> 跟读模式: 关
-                </button>
-                <button id="recognizeBtn" class="btn accent-alt">
-                    <span>👁️‍🗨️</span> 辨音模式: 关
-                </button>
-                <button id="simpleBtn" class="btn dict-btn">
-                    <span>📝</span> 简易听写: 关
-                </button>
-                <button id="fullBtn" class="btn dict-btn">
-                    <span>⌨️</span> 全部听写: 关
-                </button>
+                <div class="main-controls">
+                    <button id="autoPlayBtn" class="btn">
+                        <span>▶</span> 自动播放
+                    </button>
+                    <button id="shuffleBtn" class="btn">
+                        <span>🔀</span> 随机播放
+                    </button>
+                    <button id="toggleModesBtn" class="btn">
+                        <span>⚙️</span> 练习模式
+                    </button>
+                </div>
+                <div id="modesPanel" class="modes-panel hidden">
+                    <button id="shadowBtn" class="btn secondary">
+                        <span>🎤</span> 跟读模式: 关
+                    </button>
+                    <button id="recognizeBtn" class="btn accent-alt">
+                        <span>👁️‍🗨️</span> 辨音模式: 关
+                    </button>
+                    <button id="simpleBtn" class="btn dict-btn">
+                        <span>📝</span> 简易听写: 关
+                    </button>
+                    <button id="fullBtn" class="btn dict-btn">
+                        <span>⌨️</span> 全部听写: 关
+                    </button>
+                </div>
             </div>
         </header>
 

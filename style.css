@@ -63,7 +63,27 @@ header {
 
 .controls {
   display: flex;
+  flex-direction: column;
   gap: 12px;
+}
+
+.main-controls {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.modes-panel {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.modes-panel.hidden {
+  display: none;
 }
 
 .btn {
@@ -124,16 +144,16 @@ header {
 
 .word-card {
   background: var(--card-bg);
-  padding: 20px;
   border-radius: var(--border-radius);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.05);
   transition: all var(--transition-speed);
-  cursor: pointer;
   position: relative;
   overflow: hidden;
+  scroll-margin-top: 180px;
 }
 
 .word-card:hover {
