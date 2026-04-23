@@ -401,6 +401,8 @@ async function fallbackToMediaRecorder(btn, card) {
     }
 }
 
+let useMediaRecorderFallback = false;
+
 function toggleRecord(event, index) {
     event.stopPropagation();
     const btn = event.currentTarget;
@@ -414,7 +416,7 @@ function toggleRecord(event, index) {
     }
 
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) {
+    if (useMediaRecorderFallback || !SpeechRecognition) {
         fallbackToMediaRecorder(btn, card);
         return;
     }
@@ -464,10 +466,17 @@ function toggleRecord(event, index) {
         console.error('Speech recognition error', e.error);
         if (e.error === 'not-allowed') {
             showFeedback(card, '❌ 请允许麦克风权限', true);
-        } else if (e.error === 'network') {
-            showFeedback(card, '❌ 语音识别需要网络连接', true);
-        } else if (e.error === 'aborted') {
-            showFeedback(card, '❌ 识别被系统中断 (请勿在发音时同时点击)', true);
+        } else if (e.error === 'network' || e.error === 'aborted') {
+            // 自动降级：记录标志位，并清理当前的识别器
+            useMediaRecorderFallback = true;
+            recognition.onend = null; // 防止 onend 覆盖状态
+            recognition = null;
+            
+            btn.classList.remove('active');
+            card.classList.remove('recording');
+            
+            // 立即启动降级录音模式
+            fallbackToMediaRecorder(btn, card);
         } else {
             showFeedback(card, `❌ 识别出错: ${e.error}`, true);
         }
