@@ -351,8 +351,6 @@ window.checkFullDict = (input, correctWord, wordIndex) => {
 };
 
 let recognition = null;
-let mediaRecorder = null;
-let audioChunks = [];
 
 function showFeedback(card, message, isError = false) {
     let feedbackEl = card.querySelector('.speech-feedback');
